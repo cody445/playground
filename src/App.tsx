@@ -2,19 +2,21 @@ import { TrackerCard } from './components/TrackerCard';
 
 function App() {
     return (
-        <div className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900">
-            <div className="max-w-2xl mx-auto space-y-8">
+        <div className="min-h-screen bg-brand-light-blue p-8 font-sans text-brand-blue flex flex-col items-center justify-center">
+            <div className="max-w-3xl w-full space-y-8">
                 <div className="text-center space-y-2">
-                    <h1 className="text-2xl font-bold">PoC: Package Tracker for HubSpot</h1>
-                    <p className="text-slate-500">
-                        Enter a tracking number below to verify the card logic.
+                    <h1 className="text-3xl font-extrabold tracking-tight text-brand-blue">
+                        Package Status Tracker
+                    </h1>
+                    <p className="text-brand-secondary-blue font-medium">
+                        Secured Tech Logistics
                     </p>
                 </div>
 
                 <TrackerCard />
 
-                <div className="text-xs text-center text-gray-400">
-                    <p>Proof of Concept - Not connected to live Carrier APIs</p>
+                <div className="text-xs text-center text-slate-400 mt-12">
+                    <p>© 2026 Secured Tech. Proof of Concept.</p>
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ interface ProgressBarProps {
     carrier: string | null;
 }
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({ steps, carrier }) => {
+export const ProgressBar: React.FC<ProgressBarProps> = ({ steps }) => {
     if (!steps || steps.length === 0) return null;
 
     const getIcon = (label: string) => {
@@ -24,20 +24,22 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ steps, carrier }) => {
         return Check;
     };
 
-    const brandColor = carrier === 'FedEx' ? 'bg-purple-600 text-purple-600' : 'bg-yellow-600 text-yellow-600';
-    const brandBorder = carrier === 'FedEx' ? 'border-purple-600' : 'border-yellow-600';
+    // We are using Brand Colors primarily now.
+    // "Completed" steps = Primary Blue (Secured Tech Brand)
+    // "Current" step = Primary Orange (Action color)
+    // "Pending" step = Gray
 
     return (
-        <div className="w-full py-6">
+        <div className="w-full px-2">
             <div className="flex items-center justify-between relative">
-                {/* Connection Line */}
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
-                <div
-                    className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-1 -z-10 transition-all duration-500",
-                        carrier === 'FedEx' ? 'bg-purple-600' : 'bg-yellow-600'
-                    )}
-                    style={{ width: `${(steps.findIndex(s => s.status === 'current') / (steps.length - 1)) * 100}%` }}
-                ></div>
+                {/* Background Grey Line */}
+                <div className="absolute left-0 top-[18px] w-full h-1 bg-slate-100 -z-20 rounded-full"></div>
+
+                {/* Dynamic Progress Line - Fills up to the current step */}
+                {/* We calculate absolute position better or just rely on flex layout, but creating a bar that connects them is visually nice. 
+             Simplified for Reliability: Let the individual items handle their "state" visualization, but the line is tricky in flex without fixed widths.
+             Let's emulate the progress bar line.
+         */}
 
                 {steps.map((step, index) => {
                     const Icon = getIcon(step.label);
@@ -45,25 +47,43 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ steps, carrier }) => {
                     const isCurrent = step.status === 'current';
                     const isPending = step.status === 'pending';
 
+                    // Line segment to the right (except last item)
+                    // This is a simple visual hack to color the line between steps
+                    const isLast = index === steps.length - 1;
+
                     return (
-                        <div key={index} className="flex flex-col items-center group relative">
+                        <div key={index} className="flex-1 flex flex-col items-center relative group">
+                            {/* Connecting Line to next step */}
+                            {!isLast && (
+                                <div className={cn(
+                                    "absolute top-[18px] left-[50%] w-full h-1 -z-10 transition-colors duration-500",
+                                    isCompleted ? "bg-brand-blue" : "bg-slate-100"
+                                )}></div>
+                            )}
+
+                            {/* Icon Circle */}
                             <div
                                 className={cn(
-                                    "w-10 h-10 rounded-full flex items-center justify-center border-2 bg-white transition-all duration-300",
-                                    isCompleted ? `${brandBorder} ${brandColor.split(' ')[1]}` :
-                                        isCurrent ? `${brandBorder} ${brandColor} text-white` :
-                                            "border-gray-200 text-gray-300"
+                                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10 shadow-sm",
+                                    isCompleted ? "bg-brand-blue border-brand-blue text-white" :
+                                        isCurrent ? "bg-brand-orange border-brand-orange text-white ring-4 ring-brand-light-orange" :
+                                            "bg-white border-slate-200 text-slate-300"
                                 )}
                             >
                                 {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                             </div>
 
-                            <div className="absolute top-12 flex flex-col items-center w-32 text-center">
-                                <span className={cn("text-xs font-bold", isPending ? "text-gray-400" : "text-gray-800")}>
+                            {/* Text Labels */}
+                            <div className="mt-4 flex flex-col items-center text-center w-24">
+                                <span className={cn(
+                                    "text-[11px] font-bold uppercase tracking-wide mb-0.5",
+                                    isCurrent ? "text-brand-orange" :
+                                        isCompleted ? "text-brand-blue" : "text-slate-400"
+                                )}>
                                     {step.label}
                                 </span>
-                                <span className="text-[10px] text-gray-500">{step.date}</span>
-                                <span className="text-[10px] text-gray-400">{step.location}</span>
+                                <span className="text-[10px] text-slate-500 font-medium">{step.date}</span>
+                                <span className="text-[10px] text-slate-400">{step.location}</span>
                             </div>
                         </div>
                     );
