@@ -10,6 +10,15 @@ export const TrackerCard: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // Check URL params for tracking number
+        const params = new URLSearchParams(window.location.search);
+        const trackingParam = params.get('tracking');
+        if (trackingParam) {
+            setInput(trackingParam);
+        }
+    }, []);
+
+    useEffect(() => {
         // Auto-detect when input changes
         const carrier = detectCarrier(input);
         if (carrier) {
