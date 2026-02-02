@@ -45,7 +45,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ steps }) => {
                     const Icon = getIcon(step.label);
                     const isCompleted = step.status === 'completed';
                     const isCurrent = step.status === 'current';
-                    const isPending = step.status === 'pending';
+
 
                     // Line segment to the right (except last item)
                     // This is a simple visual hack to color the line between steps
